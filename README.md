@@ -1,6 +1,6 @@
 Setup of a very simple multi engine data stack.
 
-More details in this article: 
+More details in [this](https://juhache.substack.com/p/multi-engine-data-stack-v0) article: 
 
 # Getting Started
 
