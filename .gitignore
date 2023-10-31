@@ -1,0 +1,7 @@
+venv/
+.env
+.vscode
+dbt/profiles.yml
+dbt/*.dbi
+**/__pycache__/
+.DS_Store

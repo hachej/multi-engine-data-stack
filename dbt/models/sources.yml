@@ -1,0 +1,45 @@
+version: 2
+
+sources:
+  - name: raw_data
+    tables:
+      - name: orders
+        meta:
+          external_location: "read_parquet('s3://newsletter-multiengine-stack/data/raw_data/orders/*.parquet', filename=true)"
+        columns:
+          - name: dt
+            data_type: varchar
+          - name: filename
+            data_type: varchar
+          - name: order_id
+            data_type: varchar
+          - name: quantity
+            data_type: varchar
+          - name: purchase_price
+            data_type: varchar
+          - name: sku
+            data_type: varchar 
+  - name: landing
+    tables:
+      - name: landing_orders
+        meta:
+          dagster:
+            asset_key: ["landing_orders"]
+        external:
+          location: "@NEWSLETTER_MULTIENGINE_STACK.PUBLIC.NEWSLETTER_MULTIENGINE_STACK_STAGE/landing_orders/"
+          file_format: "( type = parquet )" 
+        columns:
+          - name: dt
+            data_type: varchar
+          - name: filename
+            data_type: varchar
+          - name: order_id
+            data_type: varchar
+          - name: quantity
+            data_type: varchar
+          - name: purchase_price
+            data_type: varchar
+          - name: sku
+            data_type: varchar
+
+
