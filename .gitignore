@@ -5,3 +5,7 @@ dbt/profiles.yml
 dbt/*.dbi
 **/__pycache__/
 .DS_Store
+venv/
+venv2/
+tmp*/
+*.duckdb

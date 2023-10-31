@@ -2,7 +2,7 @@
 
 {{ config(
     materialized='external', 
-    location='s3://newsletter-multiengine-stack/data/landing_orders/landing_orders.parquet',
+    location='s3://BUCKET_NAME/data/landing_orders/landing_orders.parquet',
     format="parquet",
     tags=["duckdb"]
     ) 

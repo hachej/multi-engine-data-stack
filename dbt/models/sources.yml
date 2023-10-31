@@ -5,7 +5,7 @@ sources:
     tables:
       - name: orders
         meta:
-          external_location: "read_parquet('s3://newsletter-multiengine-stack/data/raw_data/orders/*.parquet', filename=true)"
+          external_location: "read_parquet('s3://BUCKET_NAME/data/raw_data/orders/*.parquet', filename=true)"
         columns:
           - name: dt
             data_type: varchar

@@ -43,7 +43,7 @@ set s3_secret_access_key='{os.environ["AWS_SECRET_ACCESS_KEY"]}';
 
 resources = {
     # this io_manager allows us to load dbt models as pandas dataframes
-    "io_manager":  DuckPondIOManager("newsletter-multiengine-stack", DuckDB(DUCKDB_LOCAL_CONFIG), prefix="data/"),
+    "io_manager":  DuckPondIOManager("BUCKET_NAME", DuckDB(DUCKDB_LOCAL_CONFIG), prefix="data/"),
     # this resource is used to execute dbt cli commands
     "dbt": dbt_resource,
 }
