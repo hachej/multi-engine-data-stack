@@ -1,0 +1,40 @@
+service: lambda-duck
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.11
+  # architecture: arm64
+  memorySize: 3008
+  timeout: 600
+	
+  iam:
+    role:
+      statements:
+        # Allow functions to list all buckets
+        - Effect: Allow
+          Action: 's3:ListBucket'
+          Resource: '*'
+        # Allow functions to read/write objects in a bucket
+        - Effect: Allow
+          Action:
+            - 's3:GetObject'
+            - 's3:PutObject'
+          Resource:
+            - 'arn:aws:s3:::newsletter-multiengine-stack/*'
+	
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    
+functions:
+  hello:
+    handler: handler.handler
+    events:
+      - httpApi:
+          path: /
+          method: get
+
+plugins:
+  - serverless-iam-roles-per-function
+  - serverless-python-requirements

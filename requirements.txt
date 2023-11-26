@@ -6,3 +6,6 @@ dbt-snowflake
 boto3
 pandas
 sqlescapy
+streamlit
+streamlit
+streamlit-nivo

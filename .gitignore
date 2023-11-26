@@ -9,3 +9,4 @@ venv/
 venv2/
 tmp*/
 *.duckdb
+**/node_modules/**
