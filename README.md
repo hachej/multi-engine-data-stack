@@ -2,6 +2,23 @@ Setup of a very simple multi engine data stack.
 
 More details in [this](https://juhache.substack.com/p/multi-engine-data-stack-v0) article: 
 
+# expe duck lambda:
+1: sls/ -> contains lambda function code
+deploy with:
+```
+cd sls/lambda-duck
+export AWS_PROFILE=<your_profile>
+sls deploy
+```
+
+streamlit -> contains dashboard
+run locally with:
+```
+cd streamlit
+export AWS_PROFILE=<your_profile>
+streamlit run app.py
+```
+
 # Getting Started
 
 1- Install requirements.txt
