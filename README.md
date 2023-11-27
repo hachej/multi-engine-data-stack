@@ -1,17 +1,28 @@
-Setup of a very simple multi engine data stack.
+# Multi Engine Data Stacks
 
-More details in [this](https://juhache.substack.com/p/multi-engine-data-stack-v0) article: 
+Experimentations around mixing compute engine together for building data platforms.
 
-# expe duck lambda:
-1: sls/ -> contains lambda function code
-deploy with:
+# Distribution Layer
+Setup of a very simple distribution layer based on duckDB and AWS Lambda.
+
+## sls/
+
+Contains lambda function code.
+
+Replace with your bucket name in file sls/lambda-duck/serverless.yml row 24.
+
+Deploy with:
 ```
 cd sls/lambda-duck
 export AWS_PROFILE=<your_profile>
 sls deploy
 ```
 
-streamlit -> contains dashboard
+## streamlit/
+Contains streamlit dashboard.
+
+Replace BUCKET_NAME variable with your bucket name in file streamlit/app.py
+
 run locally with:
 ```
 cd streamlit
@@ -19,7 +30,10 @@ export AWS_PROFILE=<your_profile>
 streamlit run app.py
 ```
 
-# Getting Started
+# Data Pipeline Layer
+Setup of a very simple multi engine data stack.
+
+More details in [this](https://juhache.substack.com/p/multi-engine-data-stack-v0) article: 
 
 1- Install requirements.txt
 ```

@@ -6,6 +6,7 @@ import datetime
 
 sys.path.append(str(pathlib.Path(__file__).parent.parent.resolve()))
 
+BUCKET_NAME = 'newsletter-multiengine-stack'
 
 def test_my_model_save():
     os.environ['AWS_REGION'] = 'us-east-1'
@@ -26,7 +27,7 @@ def test_my_model_save():
     # test lambda handler
     from handler import handler
     limit = 20
-    query = "SELECT * FROM read_parquet('s3://newsletter-multiengine-stack/data/tpch_1/year=*/month=*/*.parquet', HIVE_PARTITIONING = 1) WHERE year = 1992;"
+    query = f"SELECT * FROM read_parquet('s3://{BUCKET_NAME}/data/tpch_1/year=*/month=*/*.parquet', HIVE_PARTITIONING = 1) WHERE year = 1992;"
     payload = {'q': query, 'limit': limit}
     output = handler(payload, {})
 
@@ -34,7 +35,7 @@ def test_my_model_save():
     query = f"""
     SELECT strftime(L_SHIPDATE, '%Y-%m-%d') as day, sum(L_QUANTITY) as value
     FROM(
-        SELECT *,year, month FROM read_parquet('s3://newsletter-multiengine-stack/data/tpch_1/year=*/month=*/*.parquet', HIVE_PARTITIONING = 1) as t
+        SELECT *,year, month FROM read_parquet(f's3://{BUCKET_NAME}/data/tpch_1/year=*/month=*/*.parquet', HIVE_PARTITIONING = 1) as t
         WHERE (year > {d[0].year} OR (year = {d[0].year} AND month >= {d[0].month}))
         AND (year < {d[1].year} OR (year = {d[1].year} AND month <= {d[1].month}))
     )

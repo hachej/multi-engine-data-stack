@@ -7,13 +7,15 @@ import datetime
 import boto3
 import os 
 
-S3_BASE_PATH = "s3://newsletter-multiengine-stack/data/tpch_1"
+
+BUCKET_NAME = "newsletter-multiengine-stack"
+S3_BASE_PATH = f"s3://{BUCKET_NAME}/data/tpch_10"
 session = boto3.session.Session(profile_name=os.environ["AWS_PROFILE"])
 lambda_client = session.client('lambda', region_name='us-east-1')
 
 d = st.date_input(
     "Sales analytics date range",
-    (datetime.date(1995, 1, 1),datetime.date(1995, 1, 10)),
+    (datetime.date(1992, 1, 1),datetime.date(1992, 1, 10)),
     datetime.date(1992, 1, 1),
     datetime.date(1998, 12, 31),
     format="MM.DD.YYYY",
@@ -21,8 +23,7 @@ d = st.date_input(
      
 d
 
-
-if len(d)>1:
+if st.button('Get calendar chart'):
     query = f"""
         SELECT strftime(L_SHIPDATE, '%Y-%m-%d') as day, sum(L_QUANTITY) as value
         FROM(
