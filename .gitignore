@@ -9,3 +9,5 @@ venv/
 venv2/
 tmp*/
 *.duckdb
+**.user.yml
+license.env

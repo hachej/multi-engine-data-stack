@@ -11,9 +11,9 @@ from .assets import raw_data
 from .assets.dbt import (
     DBT_PROJECT_DIR,
     dbt_project_assets_duck,
-    dbt_project_assets_snow,
+    dbt_project_assets_supabase,
     duck_models,
-    snow_models,
+    supabase_models,
     dbt_resource,
 )
 
@@ -31,9 +31,9 @@ duck_job = define_asset_job(
     "duck_job", 
     selection=duck_models)
 
-snow_job = define_asset_job(
+supabase_job = define_asset_job(
     "snow_job", 
-    selection=snow_models)
+    selection=supabase_models)
 
 DUCKDB_LOCAL_CONFIG=f"""
 set s3_region="us-east-1";
@@ -43,13 +43,13 @@ set s3_secret_access_key='{os.environ["AWS_SECRET_ACCESS_KEY"]}';
 
 resources = {
     # this io_manager allows us to load dbt models as pandas dataframes
-    "io_manager":  DuckPondIOManager("BUCKET_NAME", DuckDB(DUCKDB_LOCAL_CONFIG), prefix="data/"),
+    "io_manager":  DuckPondIOManager(os.environ["BUCKET_NAME"], DuckDB(DUCKDB_LOCAL_CONFIG), prefix="data/"),
     # this resource is used to execute dbt cli commands
     "dbt": dbt_resource,
 }
 
 defs = Definitions(
-    assets=[dbt_project_assets_duck, dbt_project_assets_snow, *raw_data_assets],
+    assets=[dbt_project_assets_duck, dbt_project_assets_supabase, *raw_data_assets],
     resources=resources,
     schedules=[
         ScheduleDefinition(job=raw_data_update_job, cron_schedule="*/2 * * * *"),

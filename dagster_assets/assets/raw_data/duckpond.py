@@ -89,11 +89,13 @@ class DuckPondIOManager(IOManager):
                 f"Expected asset to return a SQL; got {select_statement!r}"
             )
 
+        url = self._get_s3_url(context)
+        print(url)
         self.duckdb.query(
             SQL(
                 "copy $select_statement to $url (format parquet)",
                 select_statement=select_statement,
-                url=self._get_s3_url(context),
+                url=url,
             )
         )
 

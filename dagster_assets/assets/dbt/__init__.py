@@ -25,10 +25,10 @@ def dbt_project_assets_duck(context: AssetExecutionContext, dbt: DbtCliResource)
 
 @dbt_assets(
     manifest=dbt_manifest_path,
-    select='tag:snowflake'
+    select='tag:supabase'
 )
-def dbt_project_assets_snow(context: AssetExecutionContext, dbt: DbtCliResource):
-    yield from dbt.cli(["build", "--profile", "snow"], context=context).stream()
+def dbt_project_assets_supabase(context: AssetExecutionContext, dbt: DbtCliResource):
+    yield from dbt.cli(["build", "--profile", "supabase"], context=context).stream()
 
 duck_models = DbtManifestAssetSelection(manifest=dbt_manifest_path, select="tag:duckdb")
-snow_models = DbtManifestAssetSelection(manifest=dbt_manifest_path, select="tag:snowflake")
+supabase_models = DbtManifestAssetSelection(manifest=dbt_manifest_path, select="tag:supabase")

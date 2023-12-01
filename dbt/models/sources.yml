@@ -5,7 +5,7 @@ sources:
     tables:
       - name: orders
         meta:
-          external_location: "read_parquet('s3://BUCKET_NAME/data/raw_data/orders/*.parquet', filename=true)"
+          external_location: "read_parquet('s3://{{ env_var('BUCKET_NAME') }}/data/raw_data/orders/*.parquet', filename=true)"
         columns:
           - name: dt
             data_type: varchar
@@ -19,27 +19,39 @@ sources:
             data_type: varchar
           - name: sku
             data_type: varchar 
-  - name: landing
+  # - name: landing
+  #   tables:
+  #     - name: landing_orders
+  #       meta:
+  #         dagster:
+  #           asset_key: ["landing_orders"]
+  #         external_location: "read_parquet('s3://{{ env_var('BUCKET_NAME') }}/data/landing/orders/*.parquet')"
+  #       columns:
+  #         - name: dt
+  #           data_type: varchar
+  #         - name: filename
+  #           data_type: varchar
+  #         - name: order_id
+  #           data_type: varchar
+  #         - name: quantity
+  #           data_type: varchar
+  #         - name: purchase_price
+  #           data_type: varchar
+  #         - name: sku
+  #           data_type: varchar
+  - name: staging
     tables:
-      - name: landing_orders
+      - name: staging_orders_per_month
         meta:
-          dagster:
-            asset_key: ["landing_orders"]
-        external:
-          location: "@NEWSLETTER_MULTIENGINE_STACK.PUBLIC.NEWSLETTER_MULTIENGINE_STACK_STAGE/landing_orders/"
-          file_format: "( type = parquet )" 
+          dagster: 
+            asset_key: ["staging_orders_per_month"]
+          external_location: "s3://newsletter-multiengine-stack/data/staging/orders_per_month/orders_per_month.parquet"
         columns:
-          - name: dt
-            data_type: varchar
-          - name: filename
-            data_type: varchar
-          - name: order_id
-            data_type: varchar
-          - name: quantity
-            data_type: varchar
-          - name: purchase_price
-            data_type: varchar
-          - name: sku
-            data_type: varchar
-
-
+          - name: month
+            data_type: bigint
+          - name: year
+            data_type: bigint
+          - name: total_orders_per_month
+            data_type: bigint
+          - name: total_quantity_per_month
+            data_type: float

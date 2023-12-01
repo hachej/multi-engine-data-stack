@@ -9,16 +9,13 @@ More details in [this](https://juhache.substack.com/p/multi-engine-data-stack-v0
 pip install -r requirements.txt
 ```
 
-2- Replace BUCKET_NAME by your bucket name in the following files:
-- dbt/models/sources.yml
-- dbt/models/multiengine/landing/landing_orders.sql
-- dagster_assets/__init__.py
 
-3- Set the following env variables:
+1- Set the following variables in the .env file:
 - AWS_ACCESS_KEY_ID
 - AWS_SECRET_ACCESS_KEY
+- BUCKET_NAME
 
-4- Set your dbt/profiles.yml
+2- Set your dbt/profiles.yml
 ```
 duck:
   target: duck
@@ -33,8 +30,22 @@ duck:
         s3_region:
         s3_access_key_id: 
         s3_secret_access_key: 
-    
-snow:
+
+supabase:
+  target: supabase
+  outputs: 
+    supabase:
+      type: postgres
+      host: 
+      user: postgres
+      password: 
+      port: 5432
+      dbname: postgres
+      schema: metric
+      threads: 1
+      connect_timeout: 30
+
+snow: 
   target: snow
   outputs: 
     snow:
@@ -46,24 +57,7 @@ snow:
       schema: 
 ```
 
-5- Setup Snowflake:
-```
-CREATE DATABASE NEWSLETTER_MULTIENGINE_STACK;
-
-CREATE OR REPLACE STORAGE INTEGRATION NEWSLETTER_MULTIENGINE_STACK_INTEGRATION
-...;
-
-CREATE OR REPLACE FILE FORMAT NEWSLETTER_MULTIENGINE_STACK_FORMAT
-  TYPE = PARQUET
-;
-
-CREATE OR REPLACE STAGE NEWSLETTER_MULTIENGINE_STACK_STAGE
-  STORAGE_INTEGRATION = NEWSLETTER_MULTIENGINE_STACK_INTEGRATION
-  URL = ...
-  FILE_FORMAT = NEWSLETTER_MULTIENGINE_STACK_FORMAT;
-```
-
-6- Run Dagster
+3- Run Dagster
 ```
 dagster dev
 ```
