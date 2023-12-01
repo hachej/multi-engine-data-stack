@@ -10,8 +10,8 @@ pip install -r requirements.txt
 ```
 
 
-1- Set the following variables in the .env file:
-rename .env.local to .env and complete the following variables:
+1- Set .env
+Rename .env.local to .env and complete the following variables:
 - AWS_ACCESS_KEY_ID
 - AWS_SECRET_ACCESS_KEY
 - BUCKET_NAME
