@@ -2,7 +2,7 @@ name: "mutli_engine_stack"
 version: "1.0.0"
 config-version: 2
 
-profile: snow
+profile: duck
 
 analysis-paths: ["analyses"]
 test-paths: ["tests"]

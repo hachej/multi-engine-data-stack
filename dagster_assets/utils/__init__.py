@@ -31,7 +31,10 @@ def _random_times(n: int):
 
 def random_data(extra_columns: Dict[str, Any], n: int) -> pd.DataFrame:
     # always have user_id and day
-    data = {"user_id": np.random.randint(0, 1000, size=n), "dt": _random_times(n)}
+    data = {
+        "user_id": np.random.randint(0, 1000, size=n), 
+        "dt": _random_times(n)
+        }
     for name, dtype in extra_columns.items():
         if dtype == str:
             data[name] = [uuid.uuid4() for _ in range(n)]

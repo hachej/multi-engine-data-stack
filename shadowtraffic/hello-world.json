@@ -1,0 +1,60 @@
+{
+  "generators": [
+    {
+      "topic": "query-topic",
+      "value": {
+        "query_id": {
+          "_gen": "uuid"
+        },
+        "account_id": {
+          "_gen": "oneOf",
+          "choices": [
+            "c4cefa9e-8a45-45be-ae65-5a1d3972e18e",
+            "dcf134a1-1871-49d5-8fdf-64fd82c907cf"
+          ]
+        },
+        "query_agent": "chatbot",
+        "start_time": {
+          "_gen" : "formatDateTime",
+          "ms" : {
+            "_gen" : "now"
+          },
+          "format" : "yyyy-MM-dd HH:mm:ss"
+        },
+        "processed_kb": {
+          "_gen": "uniformDistribution",
+          "bounds": [
+            100,
+            1000
+          ]
+        },
+        "compute_size": {
+          "_gen": "normalDistribution",
+          "mean": 100,
+          "sd": 20,
+          "bounds": [
+            0,
+            100
+          ]
+        },
+        "execution_duration_ms": {
+          "_gen": "uniformDistribution",
+          "bounds": [
+            1000,
+            10000
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "dev-kafka": {
+      "kind": "kafka",
+      "producerConfigs": {
+        "bootstrap.servers": "host.docker.internal:29092",
+        "key.serializer": "io.shadowtraffic.kafka.serdes.JsonSerializer",
+        "value.serializer": "io.shadowtraffic.kafka.serdes.JsonSerializer"
+      }
+    }
+  }
+}

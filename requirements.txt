@@ -3,6 +3,9 @@ dagster-webserver
 dagster-dbt
 dbt-duckdb
 dbt-snowflake
+dbt-postgres
+dbt-risingwave
 boto3
 pandas
 sqlescapy
+dagster_postgres

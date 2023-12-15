@@ -12,8 +12,10 @@ from .assets.dbt import (
     DBT_PROJECT_DIR,
     dbt_project_assets_duck,
     dbt_project_assets_supabase,
+    dbt_project_assets_risingwave,
     duck_models,
     supabase_models,
+    risingwave_models,
     dbt_resource,
 )
 
@@ -32,8 +34,12 @@ duck_job = define_asset_job(
     selection=duck_models)
 
 supabase_job = define_asset_job(
-    "snow_job", 
+    "supabase_job", 
     selection=supabase_models)
+
+risingwave_job = define_asset_job(
+    "risingwave_job", 
+    selection=risingwave_models)
 
 DUCKDB_LOCAL_CONFIG=f"""
 set s3_region="us-east-1";
@@ -49,7 +55,7 @@ resources = {
 }
 
 defs = Definitions(
-    assets=[dbt_project_assets_duck, dbt_project_assets_supabase, *raw_data_assets],
+    assets=[dbt_project_assets_duck, dbt_project_assets_supabase,dbt_project_assets_risingwave, *raw_data_assets],
     resources=resources,
     schedules=[
         ScheduleDefinition(job=raw_data_update_job, cron_schedule="*/2 * * * *"),

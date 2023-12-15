@@ -18,7 +18,7 @@ dbt_manifest_path = dbt_parse_invocation.target_path.joinpath("manifest.json")
 
 @dbt_assets(
     manifest=dbt_manifest_path,
-    select='tag:duckdb'
+    select='tag:duckdb',
 )
 def dbt_project_assets_duck(context: AssetExecutionContext, dbt: DbtCliResource):
     yield from dbt.cli(["build", "--profile", "duck"], context=context).stream()
@@ -30,5 +30,13 @@ def dbt_project_assets_duck(context: AssetExecutionContext, dbt: DbtCliResource)
 def dbt_project_assets_supabase(context: AssetExecutionContext, dbt: DbtCliResource):
     yield from dbt.cli(["build", "--profile", "supabase"], context=context).stream()
 
+@dbt_assets(
+    manifest=dbt_manifest_path,
+    select='tag:risingwave'
+)
+def dbt_project_assets_risingwave(context: AssetExecutionContext, dbt: DbtCliResource):
+    yield from dbt.cli(["build", "--profile", "risingwave"], context=context).stream()
+
 duck_models = DbtManifestAssetSelection(manifest=dbt_manifest_path, select="tag:duckdb")
 supabase_models = DbtManifestAssetSelection(manifest=dbt_manifest_path, select="tag:supabase")
+risingwave_models = DbtManifestAssetSelection(manifest=dbt_manifest_path, select="tag:risingwave")

@@ -3,55 +3,63 @@ version: 2
 sources:
   - name: raw_data
     tables:
-      - name: orders
+      - name: accounts
         meta:
-          external_location: "read_parquet('s3://{{ env_var('BUCKET_NAME') }}/data/raw_data/orders/*.parquet', filename=true)"
+          external_location: "read_parquet('s3://{{ env_var('BUCKET_NAME') }}/data/raw_data/accounts/*.parquet', filename=true)"
         columns:
-          - name: dt
+          - name: account_id
             data_type: varchar
-          - name: filename
+          - name: country
             data_type: varchar
-          - name: order_id
+          - name: age
             data_type: varchar
-          - name: quantity
-            data_type: varchar
-          - name: purchase_price
-            data_type: varchar
-          - name: sku
-            data_type: varchar 
-  # - name: landing
-  #   tables:
-  #     - name: landing_orders
-  #       meta:
-  #         dagster:
-  #           asset_key: ["landing_orders"]
-  #         external_location: "read_parquet('s3://{{ env_var('BUCKET_NAME') }}/data/landing/orders/*.parquet')"
-  #       columns:
-  #         - name: dt
-  #           data_type: varchar
-  #         - name: filename
-  #           data_type: varchar
-  #         - name: order_id
-  #           data_type: varchar
-  #         - name: quantity
-  #           data_type: varchar
-  #         - name: purchase_price
-  #           data_type: varchar
-  #         - name: sku
-  #           data_type: varchar
+
+
   - name: staging
+    schema: public
     tables:
-      - name: staging_orders_per_month
+      - name: account_churn
         meta:
           dagster: 
-            asset_key: ["staging_orders_per_month"]
-          external_location: "s3://newsletter-multiengine-stack/data/staging/orders_per_month/orders_per_month.parquet"
+            asset_key: ["staging_churn"]
+          external_location: "s3://newsletter-multiengine-stack/data/staging/churn/churn.parquet"
         columns:
-          - name: month
+          - name: account_id
+            data_type: varchar
+          - name: churn_probability
             data_type: bigint
-          - name: year
-            data_type: bigint
-          - name: total_orders_per_month
-            data_type: bigint
-          - name: total_quantity_per_month
+          - name: prediction_date
+            data_type: date
+
+  - name: metric
+    schema: public
+    tables:
+      - name: subscriptions
+      - name: accounts
+      - name: query_metrics 
+        meta:
+          dagster: 
+            asset_key: ["metric_queries"]
+        columns:
+          - name: account_id
+            data_type: varchar
+          - name: key_id
+            data_type: varchar
+          - name: query_agent
+            data_type: varchar
+          - name: sum_compute_size
+            data_type: varchar
+          - name: window_end
+            data_type: varchar
+          - name: account_id_window_start
+            data_type: varchar
+          - name: query_count
+            data_type: integer 
+          - name: sum_execution_duration_ms
             data_type: float
+          - name: sum_processed_kb
+            data_type: float
+          - name: sum_credits_consumed
+            data_type: float
+          - name: window_start
+            data_type: timestamp

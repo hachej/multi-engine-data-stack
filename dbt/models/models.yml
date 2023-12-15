@@ -1,14 +1,14 @@
-models:
-  - name: landing_orders
-    config:
-      meta:
-        dagster:
-          freshness_policy:
-              maximum_lag_minutes: 5
-  - name: staging_orders
-    config:
-      meta:
-        dagster:
-          freshness_policy:
-            maximum_lag_minutes: 1
+# models:
+#   - name: landing_orders
+#     config:
+#       meta:
+#         dagster:
+#           freshness_policy:
+#               maximum_lag_minutes: 5
+#   - name: staging_orders
+#     config:
+#       meta:
+#         dagster:
+#           freshness_policy:
+#             maximum_lag_minutes: 1
 
