@@ -1,5 +1,5 @@
-sqlmesh[web,github,bigquery,snowflake]==0.105.1
+sqlmesh[web,github,bigquery,snowflake]==0.109.2
 pytest==8.1.1
-pyiceberg[glue]
-snowflake-snowpark-python
-snowflake-ml-python
+pyiceberg[glue]==0.6.1
+snowflake-snowpark-python==1.19.0
+snowflake-ml-python==1.5.3

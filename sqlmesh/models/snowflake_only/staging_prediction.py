@@ -23,7 +23,7 @@ from pyiceberg.catalog import load_catalog
         "ingestion_timestamp": "timestamp",
         # "prediction_timestamp": "timestamp"
     },
-    enabled= True,
+    enabled= False, # TODO: fix this
     depends_on=["reviews.staging_reviews"]
 )
 def execute(
