@@ -15,15 +15,15 @@ from pyiceberg.catalog import load_catalog
         name=ModelKindName.INCREMENTAL_BY_TIME_RANGE,
         time_column="ingestion_timestamp"
     ),
-    # cron="@hourly",
+    cron="*/5 * * * *",
     columns={
         "reviewid": "string",
         "sentiment": "float",
-        "classification": "variant",
-        "ingestion_timestamp": "timestamp",
-        # "prediction_timestamp": "timestamp"
+        "classification": "string",
+        "ingestion_timestamp": "timestamp"
     },
-    enabled= True,
+    start='2024-09-01',
+    enabled=True,
     depends_on=["reviews.staging_reviews"]
 )
 def execute(
@@ -36,7 +36,7 @@ def execute(
     
     print(start, end)
 
-    df = context.snowpark.table("REVIEWS.STAGING_REVIEWS").limit(2)
+    df = context.snowpark.table("MULTIENGINE_DB.REVIEWS.STAGING_REVIEWS")
     
     df = df.filter(f"(ingestion_timestamp >= '{start}') and (ingestion_timestamp <= '{end}')").select("reviewid", "review", "ingestion_timestamp")
     
@@ -47,27 +47,34 @@ def execute(
 
     df = df.withColumn(
         "classification",
-        parse_json(Complete(
+        Complete(
             "llama3-8b",
             concat(
                lit("Extract author, book and character of the following <quote>"),
                col("review"),
                lit("</quote>. Return only a json with the following format {author: <author>, book: <book>, character: <character>}. Return only JSON, no verbose text.")
             )
-        ))
+        )
     )
+
     # df = df.withColumn("prediction_timestamp", current_timestamp())
 
     df = df.select(
         "reviewid", 
         "sentiment",
-        "classification", 
-        "ingestion_timestamp",
-        # "prediction_timestamp"
+        "classification",
+        "ingestion_timestamp" 
     )
 
-    output= pa.Table.from_pandas(df.to_pandas()) 
-    
+    schema = pa.schema(
+                [
+                    pa.field("REVIEWID", pa.string(), nullable=False),
+                    pa.field("SENTIMENT", pa.float64(), nullable=True),
+                    pa.field("CLASSIFICATION", pa.string(), nullable=True),
+                    pa.field("INGESTION_TIMESTAMP", pa.timestamp('us'), nullable=False)
+                ]
+            )
+
     catalog = load_catalog("glue", **{"type": "glue",
                                 "region_name":"eu-central-1",
                                 "s3.region":"eu-central-1",
@@ -78,13 +85,11 @@ def execute(
     if ("multiengine", "predictions") not in tables:
         catalog.create_table(
             "multiengine.predictions",
-            output.schema,
+            schema,
             location="s3://sumeo-parquet-data-lake/staging/predictions")
 
     # append partition to Iceberg table
-    catalog.load_table("multiengine.predictions").append(output)
-
-
+    catalog.load_table("multiengine.predictions").append(pa.Table.from_pandas(df.to_pandas(), schema=schema))
 
     context.snowpark.sql("ALTER ICEBERG TABLE REVIEWS.PREDICTION REFRESH")
 

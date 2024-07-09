@@ -60,12 +60,10 @@ Start shadowtraffic data generator:
 ```
 cd setup/shadowtraffic
 
-docker run \                                                                                        
-  --env-file license.env \
+docker run --env-file license.env \
   -v $(pwd)/shadowtraffic.json:/home/config.json \
   shadowtraffic/shadowtraffic:latest \
-  --config /home/config.json --watch \
-  
+  --config /home/config.json --watch \ 
 ```
 
 Open another terminal and run SQLmesh.
@@ -77,7 +75,4 @@ sqlmesh --gateway snowflake plan
 
 # Question: 
 ## write enabled @IF... for python models ?
-## incremental model python
-## create a landing table that is not update or rerun
-## remote execution lambda + duckDB
 

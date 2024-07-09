@@ -15,13 +15,16 @@
                     "_gen": "oneOf", 
                     "choices":[
                         {
+                            "_gen": "string",
                             "expr": "#{Shakespeare.hamletQuote}"
                         },
                         {
-                            "expr": "#{Shakespeare.kingRichardIIIQuote}"
+                            "_gen": "string",
+                            "expr": "#{BackToTheFuture.quote}"
                         },
                         {
-                            "expr": "#{Shakespeare.romeoAndJulietQuote}"
+                            "_gen": "string",
+                            "expr": "#{Dune.quote}"
                         }
                     ]
                 },
