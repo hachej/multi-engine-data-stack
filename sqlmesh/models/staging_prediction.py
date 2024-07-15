@@ -8,6 +8,9 @@ from snowflake.snowpark.functions import col, concat, lit, current_timestamp, pa
 from sqlmesh.core.model.kind import ModelKindName
 from sqlmesh import ExecutionContext, model
 from pyiceberg.catalog import load_catalog
+from sqlmesh.core.macros import MacroEvaluator
+from macros.custom_macros import snow_only 
+import os 
 
 @model(
     "reviews.prediction",
@@ -22,9 +25,9 @@ from pyiceberg.catalog import load_catalog
         "classification": "string",
         "ingestion_timestamp": "timestamp"
     },
-    start='2024-09-01',
-    enabled=True,
-    depends_on=["reviews.staging_reviews"]
+    start='2024-07-01',
+    depends_on=["reviews.staging_reviews"],
+    enabled=snow_only(evaluator=MacroEvaluator)
 )
 def execute(
     context: ExecutionContext,
@@ -35,6 +38,9 @@ def execute(
 ) -> DataFrame:
     
     print(start, end)
+
+    context.snowpark.sql("ALTER ICEBERG TABLE REVIEWS.STAGING_REVIEWS REFRESH")
+
 
     df = context.snowpark.table("MULTIENGINE_DB.REVIEWS.STAGING_REVIEWS")
     
@@ -52,7 +58,8 @@ def execute(
             concat(
                lit("Extract author, book and character of the following <quote>"),
                col("review"),
-               lit("</quote>. Return only a json with the following format {author: <author>, book: <book>, character: <character>}. Return only JSON, no verbose text.")
+               lit("""</quote>. Return only a json with the following format {author: <author>, 
+                   book: <book>, character: <character>}. Return only JSON, no verbose text.""")
             )
         )
     )
@@ -76,9 +83,10 @@ def execute(
             )
 
     catalog = load_catalog("glue", **{"type": "glue",
-                                "region_name":"eu-central-1",
-                                "s3.region":"eu-central-1",
-                        })
+                                    "s3.region":"eu-central-1",
+                                    "s3.access-key-id": os.environ.get("AWS_ACCESS_KEY_ID"),
+                                    "s3.secret-access-key":  os.environ.get("AWS_SECRET_ACCESS_KEY")
+                            })
     
     # create Iceberg if not exists
     tables = catalog.list_tables("multiengine")
