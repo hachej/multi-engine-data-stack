@@ -1,5 +1,6 @@
 # Project setup
 
+![infra](./diagrams/infra.excalidraw.svg)
 ## Deploy the ingestion lambda function
 
 ```
@@ -76,5 +77,5 @@ sqlmesh --gateway snowflake plan
 # Question: 
 ## write enabled @IF... for python models ?
 duckdb: rm duckdb file => state lost 
-strange model macro 
 
+schema evolution

@@ -15,3 +15,10 @@ snowflake:
 		export SNOWFLAKE_ENABLED=true && \
 		export DEFAULT_DIALECT=snowflake && \
 		sqlmesh --gateway snowflake $(cmd)
+
+dag:
+	export DUCKDB_ENABLED=true && \
+		export SNOWFLAKE_ENABLED=true && \
+		export DEFAULT_DIALECT=snowflake && \
+		export DEFAULT_GATEWAY=snowflake && \
+		sqlmesh dag dag.html

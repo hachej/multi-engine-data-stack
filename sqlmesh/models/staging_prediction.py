@@ -36,16 +36,24 @@ def execute(
 ) -> DataFrame:
     print(start, end)
 
+
+
     # Refresh source Iceberg table
     context.snowpark.sql("ALTER ICEBERG TABLE REVIEWS.STAGING_REVIEWS REFRESH")
 
     # Compute model
     df = context.snowpark.table("MULTIENGINE_DB.REVIEWS.STAGING_REVIEWS")
+
+    # Filter current partition
     df = df.filter(f"(ingestion_timestamp >= '{start}') and (ingestion_timestamp <= '{end}')").select("reviewid", "review", "ingestion_timestamp")
+    
+    # Compute sentiment analysis
     df = df.withColumn(
         "sentiment",
         Sentiment(col("review"))
     )
+
+    # Compute LLM
     df = df.withColumn(
         "classification",
         Complete(
@@ -54,7 +62,7 @@ def execute(
                lit("Extract author, book and character of the following <quote>"),
                col("review"),
                lit("""</quote>. Return only a json with the following format {author: <author>, 
-                   book: <book>, character: <character>}. Return only JSON, no verbose text.""")
+                   book: <book>, character: <character>}. Return only JSON, no text.""")
             )
         )
     )
