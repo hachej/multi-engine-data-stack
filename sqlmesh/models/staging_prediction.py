@@ -8,8 +8,6 @@ from snowflake.snowpark.functions import col, concat, lit, current_timestamp, pa
 from sqlmesh.core.model.kind import ModelKindName
 from sqlmesh import ExecutionContext, model
 from pyiceberg.catalog import load_catalog
-from sqlmesh.core.macros import MacroEvaluator
-from macros.custom_macros import snow_only 
 import os 
 
 @model(
@@ -62,8 +60,6 @@ def execute(
             )
         )
     )
-
-    # df = df.withColumn("prediction_timestamp", current_timestamp())
 
     df = df.select(
         "reviewid", 

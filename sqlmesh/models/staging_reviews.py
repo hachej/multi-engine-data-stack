@@ -3,8 +3,6 @@ from datetime import datetime
 
 from sqlmesh import ExecutionContext, model
 from pyiceberg.catalog import load_catalog
-from sqlmesh.core.macros import MacroEvaluator
-from macros.custom_macros import duckdb_only
 import os 
 
 
