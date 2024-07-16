@@ -29,29 +29,30 @@ def execute(
 ) -> None:
     print(start, end)
 
+    # Setup catalog
     catalog = load_catalog("glue", **{"type": "glue",
                                     "s3.region":"eu-central-1",
                                     "s3.access-key-id": os.environ.get("AWS_ACCESS_KEY_ID"),
                                     "s3.secret-access-key":  os.environ.get("AWS_SECRET_ACCESS_KEY")
                             })
 
-    # load landing data in duckdb
+    # Load landing data in duckdb
     con = catalog.load_table("multiengine.landing_reviews").scan().to_duckdb(table_name="landing_reviews")
 
-    # compute ouput
+    # Compute model
     output = con.execute("""
-    SELECT 
-        reviewid,
-        username,
-        review,
-        epoch_ms(ingestion_date) as ingestion_timestamp,
-        source_s3_key              
-    FROM landing_reviews
-    QUALIFY
-        row_number() OVER (PARTITION BY username, review order by ingestion_timestamp) =1;
+        SELECT 
+            reviewid,
+            username,
+            review,
+            epoch_ms(ingestion_date) as ingestion_timestamp,
+            source_s3_key              
+        FROM landing_reviews
+        QUALIFY
+            row_number() OVER (PARTITION BY username, review order by ingestion_timestamp) =1;
     """).arrow()
     
-    # create Iceberg if not exists
+    # Create Iceberg if not exists
     tables = catalog.list_tables("multiengine")
     if ("multiengine", "staging_reviews") not in tables:
         catalog.create_table(
@@ -59,7 +60,7 @@ def execute(
             output.schema,
             location="s3://sumeo-parquet-data-lake/staging/reviews")
     
-    # overwrite target Iceberg table
+    # Overwrite target Iceberg table
     catalog.load_table("multiengine.staging_reviews").overwrite(output)
 
     return output.to_pandas()

@@ -34,20 +34,18 @@ def execute(
     execution_time: datetime,
     **kwargs: t.Any,
 ) -> DataFrame:
-    
     print(start, end)
 
+    # Refresh source Iceberg table
     context.snowpark.sql("ALTER ICEBERG TABLE REVIEWS.STAGING_REVIEWS REFRESH")
 
+    # Compute model
     df = context.snowpark.table("MULTIENGINE_DB.REVIEWS.STAGING_REVIEWS")
-    
     df = df.filter(f"(ingestion_timestamp >= '{start}') and (ingestion_timestamp <= '{end}')").select("reviewid", "review", "ingestion_timestamp")
-    
     df = df.withColumn(
         "sentiment",
         Sentiment(col("review"))
     )
-
     df = df.withColumn(
         "classification",
         Complete(
@@ -60,7 +58,6 @@ def execute(
             )
         )
     )
-
     df = df.select(
         "reviewid", 
         "sentiment",
@@ -68,6 +65,7 @@ def execute(
         "ingestion_timestamp" 
     )
 
+    # Load catalog & create Iceberg if not exists
     schema = pa.schema(
                 [
                     pa.field("REVIEWID", pa.string(), nullable=False),
@@ -83,7 +81,6 @@ def execute(
                                     "s3.secret-access-key":  os.environ.get("AWS_SECRET_ACCESS_KEY")
                             })
     
-    # create Iceberg if not exists
     tables = catalog.list_tables("multiengine")
     if ("multiengine", "predictions") not in tables:
         catalog.create_table(
@@ -91,9 +88,10 @@ def execute(
             schema,
             location="s3://sumeo-parquet-data-lake/staging/predictions")
 
-    # append partition to Iceberg table
+    # Append partition to Iceberg table
     catalog.load_table("multiengine.predictions").append(pa.Table.from_pandas(df.to_pandas(), schema=schema))
 
+    # Refresh Iceberg table
     context.snowpark.sql("ALTER ICEBERG TABLE REVIEWS.PREDICTION REFRESH")
 
     return df
