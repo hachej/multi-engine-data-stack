@@ -165,4 +165,3 @@ service-account.json
 sqlmesh/logs/**
 
 **/venv
-config.yaml

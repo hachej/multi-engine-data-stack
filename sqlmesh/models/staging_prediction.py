@@ -27,7 +27,7 @@ import os
     },
     start='2024-07-01',
     depends_on=["reviews.staging_reviews"],
-    enabled=snow_only(evaluator=MacroEvaluator)
+    enabled=os.environ.get("SNOWFLAKE_ENABLED")
 )
 def execute(
     context: ExecutionContext,
@@ -40,7 +40,6 @@ def execute(
     print(start, end)
 
     context.snowpark.sql("ALTER ICEBERG TABLE REVIEWS.STAGING_REVIEWS REFRESH")
-
 
     df = context.snowpark.table("MULTIENGINE_DB.REVIEWS.STAGING_REVIEWS")
     

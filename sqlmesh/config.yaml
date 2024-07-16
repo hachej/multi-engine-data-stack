@@ -1,0 +1,27 @@
+gateways:
+    duckdb:
+        connection:
+            type: duckdb
+            database: sqlmesh_multi_engine_demo.db
+    snowflake:
+        connection:
+            type: snowflake
+            account: {{ env_var('SNOWFLAKE_ACCOUNT') }} # TODO: export your env_var
+            user: {{ env_var('SNOWFLAKE_USER') }} # TODO: export your env_var
+            password: {{ env_var('SNOWFLAKE_PASSWORD') }} # TODO: export your env_var
+            database: {{ env_var('SNOWFLAKE_DATABASE') }} # TODO: export your env
+            role: {{ env_var('SNOWFLAKE_ROLE') }} # TODO: export your env
+            warehouse: {{ env_var('SNOWFLAKE_WAREHOUSE') }} # TODO: export your env
+        # state_connection:
+        #     type: duckdb
+        #     database: snowflake_state.db
+model_defaults:
+    dialect: {{ env_var('DEFAULT_DIALECT') }}
+
+default_gateway: {{ env_var('DEFAULT_GATEWAY') }}  
+
+plan:
+  enable_preview: true
+
+ui:
+  format_on_save: false

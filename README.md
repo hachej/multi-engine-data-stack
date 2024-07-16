@@ -48,7 +48,7 @@ cd setup/glue
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-cp config.yaml.local config.yaml
+cp .env.local .env 
 ```
 
 Add your Snowflake credentials to the `config.yaml` file.
@@ -75,4 +75,6 @@ sqlmesh --gateway snowflake plan
 
 # Question: 
 ## write enabled @IF... for python models ?
+duckdb: rm duckdb file => state lost 
+strange model macro 
 

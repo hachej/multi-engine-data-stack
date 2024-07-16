@@ -20,7 +20,7 @@ import os
         "source_s3_key":"string"
     },
     start='2024-07-01',
-    # enabled=duckdb_only(evaluator=MacroEvaluator)
+    enabled=os.environ.get("DUCKDB_ENABLED")
 )
 def execute(
     context: ExecutionContext,
