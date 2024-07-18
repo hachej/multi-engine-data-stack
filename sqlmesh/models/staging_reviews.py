@@ -37,26 +37,9 @@ def execute(
     # Load landing data in duckdb
     con = catalog.load_table("multiengine.landing_reviews").scan().to_duckdb(table_name="landing_reviews")
 
-    # glue_client = boto3.client('glue', region_name='eu-central-1')
-    # snapshot = glue_client.get_table(
-    #         DatabaseName="multiengine",
-    #         Name="landing_reviews"
-    #     )['Table']["Parameters"]["metadata_location"] 
-    # print(snapshot)
-    # duckdb.sql("force INSTALL iceberg from 'http://nightly-extensions.duckdb.org'; load iceberg;")
-    # count_before = con.execute(f"""
-    #                            SELECT COUNT(*) 
-    #                            FROM iceberg_scan('{snapshot}', skip_schema_inference=True)
-    #                            """).fetchall()[0][0]
-
     # Compute model
     output = con.execute("""
-        SELECT 
-            reviewid,
-            username,
-            review,
-            epoch_ms(ingestion_date) as ingestion_timestamp,
-            source_s3_key              
+        SELECT reviewid, username, review, epoch_ms(ingestion_date) as ingestion_timestamp, source_s3_key              
         FROM landing_reviews
         QUALIFY
             row_number() OVER (PARTITION BY username, review order by ingestion_timestamp) =1;

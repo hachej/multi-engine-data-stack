@@ -51,8 +51,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 cp .env.local .env 
 ```
-
-Add your Snowflake credentials to the `config.yaml` file.
+Add your Snowflake credentials to the `.env` file.
 
 # Run the pipeline
 
@@ -70,12 +69,6 @@ docker run --env-file license.env \
 Open another terminal and run SQLmesh.
 
 ```
-sqlmesh --gateway duckdb plan
-sqlmesh --gateway snowflake plan
+make duckdb cmd=run
+make snowflake cmd=run
 ```
-
-# Question: 
-## write enabled @IF... for python models ?
-duckdb: rm duckdb file => state lost 
-
-schema evolution

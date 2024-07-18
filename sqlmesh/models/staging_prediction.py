@@ -11,11 +11,7 @@ from pyiceberg.catalog import load_catalog
 import os 
 
 @model(
-    "reviews.prediction",
-    kind=dict(
-        name=ModelKindName.INCREMENTAL_BY_TIME_RANGE,
-        time_column="ingestion_timestamp"
-    ),
+    "reviews.quote_prediction",
     cron="*/5 * * * *",
     columns={
         "reviewid": "string",
@@ -35,8 +31,6 @@ def execute(
     **kwargs: t.Any,
 ) -> DataFrame:
     print(start, end)
-
-
 
     # Refresh source Iceberg table
     context.snowpark.sql("ALTER ICEBERG TABLE REVIEWS.STAGING_REVIEWS REFRESH")
@@ -62,10 +56,11 @@ def execute(
                lit("Extract author, book and character of the following <quote>"),
                col("review"),
                lit("""</quote>. Return only a json with the following format {author: <author>, 
-                   book: <book>, character: <character>}. Return only JSON, no text.""")
+                   book: <book>, character: <character>}. Return only JSON. no text.""")
             )
         )
     )
+
     df = df.select(
         "reviewid", 
         "sentiment",
@@ -98,8 +93,5 @@ def execute(
 
     # Append partition to Iceberg table
     catalog.load_table("multiengine.predictions").append(pa.Table.from_pandas(df.to_pandas(), schema=schema))
-
-    # Refresh Iceberg table
-    context.snowpark.sql("ALTER ICEBERG TABLE REVIEWS.PREDICTION REFRESH")
 
     return df
